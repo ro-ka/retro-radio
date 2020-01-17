@@ -75,6 +75,22 @@ pip3 install python-vlc
 
 Follow [the guide](https://learn.adafruit.com/adafruit-speaker-bonnet-for-raspberry-pi?view=all) to assamble, connect and setup the Adafruit Speaker Bonnet ([PDF](docs/adafruit-speaker-bonnet.pdf)).
 
+See the [pinouts](https://pinout.xyz/pinout/speaker_bonnet#) to connect:
+
+![](docs/adafruit-speaker-bonnet.png)
+
 ## Connect buttons
 
 Use two buttons for next and previous station and connect those to pins 5 and 6.
+
+## OnOff Shim
+
+See the [pinouts](https://pinout.xyz/pinout/onoff_shim#) to connect:
+
+![](docs/onoff-shim.png)
+
+## Inky pHAT
+
+See the [pinouts](https://pinout.xyz/pinout/inky_phat#) to connect:
+
+![](docs/inky-phat.png)
