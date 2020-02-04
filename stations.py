@@ -12,8 +12,9 @@ class Stations:
   currentIndex = 0
   all = []
 
-  def __init__(self, player):
+  def __init__(self, player, display):
     self.player = player
+    self.display = display
 
     # Load stations
     with open(stationsFileName, newline='') as stationsData:
@@ -53,6 +54,7 @@ class Stations:
     current = self.getCurrent()
     print('Now playing: ' + current.name)
     self.player.playUrl(current.url)
+    self.display.showStationName(current.name)
 
   def writeCurrent(self, newIndex):
     currentStationData = open(currentStationFileName, 'w')

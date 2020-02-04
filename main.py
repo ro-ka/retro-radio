@@ -1,4 +1,5 @@
 import player
+import display
 from stations import Stations
 from time import sleep
 
@@ -8,7 +9,7 @@ try:
 except:
   runningOnRaspi = False
 
-stations = Stations(player)
+stations = Stations(player, display)
 
 if runningOnRaspi:
   nextButton = Button(5)
