@@ -66,7 +66,7 @@ sudo systemctl disable rpi-eeprom-update.service
 
 ## Prepare deployment
 
-Install the GPIO zero library, vlc and pip, the python package manager:
+Install the GPIO zero library and vlc:
 
 ```sh
 sudo apt install python3-gpiozero vlc python3-vlc

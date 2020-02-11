@@ -1,19 +1,29 @@
+import os
 from inky import InkyPHAT
 from PIL import Image, ImageFont, ImageDraw
-from font_fredoka_one import FredokaOne
+
+PATH = os.path.dirname(__file__)
 
 inky_display = InkyPHAT("black")
 inky_display.set_border(inky_display.WHITE)
-font = ImageFont.truetype(FredokaOne, 22)
+
+fontFile = "fonts/PermanentMarker-Regular.ttf"
+font = ImageFont.truetype(os.path.join(PATH, fontFile), 22)
 
 def showStationName(stationName):
+  # img = Image.open(os.path.join(PATH, "assets/test.png"))
   img = Image.new("P", (inky_display.WIDTH, inky_display.HEIGHT))
+
+  # pal_img = Image.new("P", (1, 1))
+  # pal_img.putpalette((255, 255, 255) + (0, 0, 0) * 254)
+
+  # img = img.convert("RGB").quantize(palette=pal_img)
   draw = ImageDraw.Draw(img)
 
-  w, h = font.getsize(stationName)
-  x = (inky_display.WIDTH / 2) - (w / 2)
-  y = (inky_display.HEIGHT / 2) - (h / 2)
+  fontW, fontH = font.getsize(stationName)
+  fontX = (inky_display.WIDTH / 2) - (fontW / 2)
+  fontY = (inky_display.HEIGHT / 2) - (fontH / 2)
 
-  draw.text((x, y), stationName, inky_display.BLACK, font)
+  draw.text((fontX, fontY), stationName, inky_display.BLACK, font)
   inky_display.set_image(img)
   inky_display.show()

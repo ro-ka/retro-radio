@@ -1,0 +1,29 @@
+#!/usr/bin/env python3
+
+import os
+from inky import InkyPHAT
+from PIL import Image, ImageFont, ImageDraw
+
+PATH = os.path.dirname(__file__)
+
+inky_display = InkyPHAT("yellow")
+inky_display.set_border(inky_display.WHITE)
+
+message = "Ich bin aus."
+fontFile = "fonts/PermanentMarker-Regular.ttf"
+font = ImageFont.truetype(os.path.join(PATH, fontFile), 22)
+fontW, fontH = font.getsize(message)
+fontX = (inky_display.WIDTH / 2) - (fontW / 2)
+fontY = (inky_display.HEIGHT / 2) - (fontH / 2)
+
+img = Image.open(os.path.join(PATH, "assets/test.png"))
+
+pal_img = Image.new("P", (1, 1))
+pal_img.putpalette((255, 255, 255, 0, 0, 0, 0, 255, 0) + (0, 0, 0) * 252)
+
+img = img.convert("RGB").quantize(palette=pal_img)
+draw = ImageDraw.Draw(img)
+
+draw.text((fontX, fontY), message, inky_display.BLACK, font)
+inky_display.set_image(img)
+inky_display.show()
