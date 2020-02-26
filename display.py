@@ -1,4 +1,5 @@
 import os
+from threading import Thread
 from inky import InkyPHAT
 from PIL import Image, ImageFont, ImageDraw
 
@@ -10,7 +11,7 @@ inky_display.set_border(inky_display.WHITE)
 fontFile = "fonts/PermanentMarker-Regular.ttf"
 font = ImageFont.truetype(os.path.join(PATH, fontFile), 22)
 
-def showStationName(stationName):
+def showStationNameWorker(stationName):
   # img = Image.open(os.path.join(PATH, "assets/test.png"))
   img = Image.new("P", (inky_display.WIDTH, inky_display.HEIGHT))
 
@@ -27,3 +28,8 @@ def showStationName(stationName):
   draw.text((fontX, fontY), stationName, inky_display.BLACK, font)
   inky_display.set_image(img)
   inky_display.show()
+
+def showStationName(stationName):
+  # Async display update
+  thread = Thread(target=showStationNameWorker, args=(stationName,))
+  thread.start()
