@@ -72,6 +72,12 @@ Install the GPIO zero library and vlc:
 sudo apt install python3-gpiozero vlc python3-vlc
 ```
 
+Install Bluetooth player required packages:
+
+```sh
+sudo apt install alsa-utils bluez bluez-tools pulseaudio-module-bluetooth python3-gst-1.0 gstreamer1.0-pulseaudio gstreamer1.0-tools gstreamer1.0-alsa gstreamer1.0-plugins-base gstreamer1.0-plugins-good gstreamer1.0-plugins-bad
+```
+
 ## Connect Adafruit Speaker Bonnet
 
 Follow [the guide](https://learn.adafruit.com/adafruit-speaker-bonnet-for-raspberry-pi?view=all) to assamble, connect and setup the Adafruit Speaker Bonnet ([PDF](docs/adafruit-speaker-bonnet.pdf)).
@@ -107,6 +113,19 @@ polling_rate=1
 See the [pinouts](https://pinout.xyz/pinout/onoff_shim#) to connect. Note that we switched the trigger pin to 23 as the 17 is used by the Inky pHAT.
 
 ![](docs/onoff-shim.png)
+
+Edit `/usr/bin/cleanshutd`:
+
+Find the block that starts with `if shutdown_trigger; then` in line ~85 and make sure it looks like this, calling our custom display-off-message:
+
+```
+echo $msg
+wall $msg
+/home/pi/display-off-message
+wait
+daemon="off"
+shutdown -h +$shutdown_delay
+```
 
 ## Inky pHAT
 
