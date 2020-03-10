@@ -16,7 +16,7 @@ fontW, fontH = font.getsize(message)
 fontX = (inky_display.WIDTH / 2) - (fontW / 2)
 fontY = (inky_display.HEIGHT / 2) - (fontH / 2)
 
-img = Image.open(os.path.join(PATH, "assets/test.png"))
+img = Image.open(os.path.join(PATH, "assets/display-off.png"))
 
 pal_img = Image.new("P", (1, 1))
 pal_img.putpalette((255, 255, 255, 0, 0, 0, 0, 255, 0) + (0, 0, 0) * 252)
