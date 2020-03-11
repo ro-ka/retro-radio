@@ -1,5 +1,6 @@
 # Based on https://github.com/gmsoft-tuxicoman/bt-audio
 
+import subprocess
 import socket
 import dbus
 import dbus.service
@@ -328,8 +329,13 @@ class Bluetooth:
   adapt = None
 
   def loadHciuart():
+    lsmodProc = subprocess.Popen(['lsmod'], stdout=subprocess.PIPE)
+    grepProc = subprocess.Popen(['grep', 'hciuart'], stdin=lsmodProc.stdout)
+    grepProc.communicate()  # Block until finished
+    loaded = grepProc.returncode == 0
+
     if not loaded:
-      load()
+      subprocess.run(["sudo", "service", "hciuart", "start"])
 
   def start():
     self.loadHciuart()
