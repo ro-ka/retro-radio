@@ -25,6 +25,9 @@ def showRadioStationWorker(stationName):
   fontX = (inky_display.WIDTH / 2) - (fontW / 2)
   fontY = (inky_display.HEIGHT / 2) - (fontH / 2)
 
+  draw.rectangle(((fontX, fontY), (fontX + fontW + 10, fontY + fontH + 10)), fill=inky_display.BLACK)
+  draw.rectangle(((fontX - 5, fontY - 5), (fontX + fontW + 5, fontY + fontH + 5)), fill=inky_display.BLACK)
+  draw.rectangle(((fontX - 4, fontY - 4), (fontX + fontW + 4, fontY + fontH + 4)), fill=inky_display.WHITE)
   draw.text((fontX, fontY), stationName, inky_display.BLACK, font)
   inky_display.set_image(img)
   inky_display.show()
