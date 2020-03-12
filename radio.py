@@ -63,17 +63,17 @@ class Radio:
     currentStationData.write(str(newIndex))
     currentStationData.close()
 
-  def playUrl(url):
+  def playUrl(self, url):
     media = instance.media_new(url)
     media.get_mrl()
     player.set_media(media)
     player.play()
 
-  def start():
+  def start(self):
     current = self.getCurrent()
     print('Now playing: ' + current.name)
     self.playUrl(current.url)
     display.showRadioStation(current.name)
 
-  def stop():
+  def stop(self):
     player.stop()
