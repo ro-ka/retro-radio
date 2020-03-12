@@ -8,27 +8,29 @@ try:
 except:
   runningOnRaspi = False
 
+mode = None
 radio = Radio()
 bluetooth = Bluetooth()
 
 def switchToBluetooth():
+  global mode
   if mode == "bluetooth":
     return
-  global mode
   mode = "bluetooth"
 
   print("Load Bluetooth")
 
-  radio.stop()
-  bluetooth.start()
-
   nextButton.when_pressed = None
   prevButton.when_pressed = None
 
+  radio.stop()
+  bluetooth.start()
+
+
 def switchToRadio():
+  global mode
   if mode == "radio":
     return
-  global mode
   mode = "radio"
 
   print("Load Radio")
