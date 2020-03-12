@@ -5,6 +5,8 @@ import socket
 import dbus
 import dbus.service
 import dbus.mainloop.glib
+import display
+from threading import Thread
 
 import gi
 gi.require_version('Gst', '1.0')
@@ -328,7 +330,7 @@ class Bluetooth:
   bluez = None
   adapt = None
 
-  def loadHciuart():
+  def loadHciuart(self):
     lsmodProc = subprocess.Popen(['lsmod'], stdout=subprocess.PIPE)
     grepProc = subprocess.Popen(['grep', 'hciuart'], stdin=lsmodProc.stdout)
     grepProc.communicate()  # Block until finished
@@ -337,7 +339,8 @@ class Bluetooth:
     if not loaded:
       subprocess.run(["sudo", "service", "hciuart", "start"])
 
-  def start():
+  def startWorker(self):
+    display.showBluetooth()
     self.loadHciuart()
 
     if self.bluez is None:
@@ -357,7 +360,12 @@ class Bluetooth:
     mainloop = GLib.MainLoop()
     mainloop.run()
 
-  def stop():
+  def start(self):
+    # Async start update
+    thread = Thread(target=self.startWorker, args=())
+    thread.start()
+
+  def stop(self):
     if self.adapt and self.adapt is not None:
-      self.adapt.powerSet(False)
       self.adapt.discoverableSet(False)
+      self.adapt.powerSet(False)
