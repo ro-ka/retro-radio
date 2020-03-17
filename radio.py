@@ -1,9 +1,13 @@
 import display
 import csv
 import vlc
+import os
 
 stationsFileName = 'stations.csv'
 currentStationFileName = 'station-current.txt'
+dirname = os.path.dirname(__file__)
+stationsFile = os.path.join(dirname, stationsFileName)
+currentStationFile = os.path.join(dirname, currentStationFileName)
 
 instance = vlc.Instance('--input-repeat=-1', '--fullscreen')
 player = instance.media_player_new()
@@ -19,14 +23,14 @@ class Radio:
 
   def __init__(self):
     # Load stations
-    with open(stationsFileName, newline='') as stationsData:
+    with open(stationsFile, newline='') as stationsData:
       stationsRaw = csv.reader(stationsData, delimiter=',')
       for row in stationsRaw:
         self.allStations.append(Station(row[0], row[1]))
 
     # Load current station
     try:
-      with open(currentStationFileName, 'r') as currentStationData:
+      with open(currentStationFile, 'r') as currentStationData:
         currentStation = int(currentStationData.read())
         if currentStation >= 0 and currentStation < len(self.allStations):
           self.updateTo(currentStation)
@@ -59,7 +63,7 @@ class Radio:
     self.start()
 
   def writeCurrent(self, newIndex):
-    currentStationData = open(currentStationFileName, 'w')
+    currentStationData = open(currentStationFile, 'w')
     currentStationData.write(str(newIndex))
     currentStationData.close()
 
