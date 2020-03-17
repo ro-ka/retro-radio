@@ -179,8 +179,14 @@ scp assets/*.png pi@192.168.178.178:/home/pi/assets/
 scp fonts/* pi@192.168.178.178:/home/pi/fonts
 ```
 
-Create the service:
+### Create the service:
 
 ```
+sudo systemctl edit --force --full retro-radio
+```
 
+Copy the contents from the `retro-radio.service` in there and save.
+
+```
+sudo systemctl enable retro-radio
 ```
