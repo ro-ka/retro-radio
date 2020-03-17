@@ -62,6 +62,7 @@ sudo systemctl disable raspi-config.service
 sudo systemctl disable avahi-daemon.service
 sudo systemctl disable triggerhappy.service
 sudo systemctl disable rpi-eeprom-update.service
+sudo systemctl disable aplay.service
 ```
 
 ## Prepare deployment
@@ -69,7 +70,7 @@ sudo systemctl disable rpi-eeprom-update.service
 Install the GPIO zero library and vlc:
 
 ```sh
-sudo apt install python3-gpiozero vlc python3-vlc
+sudo apt install python3-gpiozero vlc python3-vlc python3-pip
 ```
 
 Install Bluetooth player required packages:
@@ -80,7 +81,7 @@ sudo apt install alsa-utils bluez bluez-tools pulseaudio-module-bluetooth python
 
 ## Connect Adafruit Speaker Bonnet
 
-Follow [the guide](https://learn.adafruit.com/adafruit-speaker-bonnet-for-raspberry-pi?view=all) to assamble, connect and setup the Adafruit Speaker Bonnet ([PDF](docs/adafruit-speaker-bonnet.pdf)).
+Follow [the guide](https://learn.adafruit.com/adafruit-speaker-bonnet-for-raspberry-pi?view=all) to assamble, connect and setup the Adafruit Speaker Bonnet ([PDF](docs/adafruit-speaker-bonnet.pdf)). Make sure to NOT install the white noise as this makes problems with the playback.
 
 See the [pinouts](https://pinout.xyz/pinout/speaker_bonnet#) to connect:
 
@@ -127,6 +128,8 @@ daemon="off"
 shutdown -h +$shutdown_delay
 ```
 
+As I have an old button for this that keeps its state when turned on, I have a modified `cleanshutd` in this repo. Adjust according to your hardware.
+
 ## Inky pHAT
 
 Connect the [Inky pHAT](https://shop.pimoroni.com/products/inky-phat?variant=12549254217811) to the Pi and install the software with this command:
@@ -138,3 +141,46 @@ curl https://get.pimoroni.com/inky | bash
 See the [pinouts](https://pinout.xyz/pinout/inky_phat#) to connect:
 
 ![](docs/inky-phat.png)
+
+## Volume control
+
+I have an old potentiometer and needed an Analoge-Digital-Converter as the Raspberry only supports digital pins. I’ve used a `MCP3008` ADC which should be connected like described [here](https://www.digikey.com/en/maker/projects/raspberry-pi-analog-to-digital-converters/72388f5f1a0843418130f56c53a1276c). As the PINs described in the tutorial there are already in use in this project, I connected the PINs like this:
+
+![](docs/mcp3008.png)
+
+```
+MCP3008 VDD to Raspberry Pi 3.3V
+MCP3008 VREF to Raspberry Pi 3.3V
+MCP3008 AGND to Raspberry Pi GND
+MCP3008 DGND to Raspberry Pi GND
+MCP3008 CLK to Raspberry Pi pin 13
+MCP3008 DOUT to Raspberry Pi pin 25
+MCP3008 DIN to Raspberry Pi pin 9
+MCP3008 CS/SHDN to Raspberry Pi pin 26
+MCP3008 CH0 to Potentiometer
+```
+
+Additionally connect the potentiometer to 3.3V and ground from the Raspberry Pi.
+Install the python module:
+
+```
+pip3 install adafruit-mcp3008
+```
+
+## Deploy
+
+Copy everything on the Raspi:
+
+```
+scp *.py pi@192.168.178.178:/home/pi/
+scp stations.csv pi@192.168.178.178:/home/pi/
+scp display-off-message pi@192.168.178.178:/home/pi/
+scp assets/*.png pi@192.168.178.178:/home/pi/assets/
+scp fonts/* pi@192.168.178.178:/home/pi/fonts
+```
+
+Create the service:
+
+```
+
+```
