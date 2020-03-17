@@ -69,6 +69,9 @@ class Radio:
     player.set_media(media)
     player.play()
 
+  def setVolume(self, volume):
+    player.audio_set_volume(volume)
+
   def start(self):
     current = self.getCurrent()
     print('Now playing: ' + current.name)

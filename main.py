@@ -1,12 +1,17 @@
 from radio import Radio
 from bluetooth import Bluetooth
+# from subprocess import call
 from time import sleep
+import Adafruit_MCP3008
 
 try:
   from gpiozero import Button
   runningOnRaspi = True
 except:
   runningOnRaspi = False
+
+VOLUME_CHANNEL = 0
+mcp = Adafruit_MCP3008.MCP3008(clk=13, cs=26, miso=25, mosi=9)
 
 mode = None
 radio = Radio()
@@ -26,7 +31,6 @@ def switchToBluetooth():
   radio.stop()
   bluetooth.start()
 
-
 def switchToRadio():
   global mode
   if mode == "radio":
@@ -40,6 +44,14 @@ def switchToRadio():
 
   nextButton.when_pressed = radio.nextStation
   prevButton.when_pressed = radio.prevStation
+
+def getVolumeFromValue(value):
+  MAX = 1023
+  correctedValue = MAX - value
+  volumeValue = int(round(correctedValue / float(MAX) * 100))
+  volumeValue = max(volumeValue, 0)
+  volumeValue = min(volumeValue, 100)
+  return volumeValue
 
 if runningOnRaspi:
   bluetoothButton = Button(16)
@@ -60,4 +72,9 @@ if runningOnRaspi:
   radioButton.when_pressed = switchToRadio
 
 while True:
-  sleep(10)
+  value = mcp.read_adc(VOLUME_CHANNEL)
+  volume = getVolumeFromValue(value)
+  radio.setVolume(volume)
+  # call(["amixer", "sset", "Master", str(volume)+"%"])
+
+  sleep(0.2)
