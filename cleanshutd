@@ -1,0 +1,108 @@
+#!/bin/bash
+
+: <<'DISCLAIMER'
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+OTHER DEALINGS IN THE SOFTWARE.
+
+This script is licensed under the terms of the MIT license.
+Unless otherwise noted, code reproduced herein
+was written for this script.
+
+- The Pimoroni Crew -
+
+DISCLAIMER
+
+# default values
+daemon_active=1
+trigger_pin=4
+led_pin=off
+poweroff_pin=off
+hold_time=1
+shutdown_delay=0
+polling_rate=1
+
+if [ -f /etc/cleanshutd.conf ]; then
+    source /etc/cleanshutd.conf
+fi
+
+if grep -q "^[[:space:]]*disable_cleanshutd=1" /boot/config.txt; then
+    echo "cleanshutd is disabled in /boot/config.txt"
+    exit 1
+elif [ "$daemon_active" == 0 ]; then
+    echo "cleanshutd is disabled in /etc/cleanshutd.conf"
+    exit 1
+fi
+
+if [ "$shutdown_delay" != 0 ]; then
+    blink_time=$shutdown_delay
+else
+    blink_time=0.1
+fi
+
+if [ "$trigger_pin" != "$led_pin" ]; then
+    raspi-gpio set $led_pin op dh
+fi
+
+raspi-gpio set $trigger_pin ip pu
+echo "monitoring BCM $trigger_pin"
+
+trigger_pin_high() {
+    raspi-gpio get $trigger_pin | grep -q "level=1 fsel=0 func=INPUT"
+}
+
+trigger_pin_low() {
+    raspi-gpio get $trigger_pin | grep -q "level=0 fsel=0 func=INPUT"
+}
+
+shutdown_trigger() {
+    if trigger_pin_high; then
+        echo "BCM $trigger_pin asserted high"
+        return 0
+    fi
+    return 1
+}
+
+daemon="on"
+while true; do
+    while [ "$daemon" = "on" ]; do
+        if shutdown_trigger; then
+            msg="BCM $trigger_pin held high, system shutdown in $shutdown_delay minutes"
+            echo $msg
+            wall $msg
+	    wall "Running shutdown notice…"
+            /home/pi/display-off-message
+	    echo "Waiting…"
+	    wait
+	    echo "Ready to shutdown!"
+	    daemon="off"
+	    shutdown -h +$shutdown_delay
+            break
+        fi
+        sleep $polling_rate
+    done
+
+    while [ "$daemon" = "off" ]; do
+        if [ ! -f /var/run/nologin ]; then
+            raspi-gpio set $trigger_pin ip pu
+            daemon="on"
+            break
+        fi
+        if [ "$led_pin" != "off" ]; then
+            raspi-gpio set $led_pin op dl
+            sleep 0.1
+            raspi-gpio set $led_pin op dh
+            sleep $blink_time
+        else
+            sleep $polling_rate
+        fi
+    done
+done
+
+exit 0
