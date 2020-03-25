@@ -11,9 +11,13 @@ inky_display.set_border(inky_display.WHITE)
 fontFile = "fonts/PermanentMarker-Regular.ttf"
 font = ImageFont.truetype(os.path.join(PATH, fontFile), 22)
 
+isUpdating = False
+nextUpateThread = None
+
 def showRadioStationWorker(stationName):
+  global isUpdating
+  isUpdating = True
   img = Image.open(os.path.join(PATH, "assets/display-radio.png"))
-  # img = Image.new("P", (inky_display.WIDTH, inky_display.HEIGHT))
 
   pal_img = Image.new("P", (1, 1))
   pal_img.putpalette((255, 255, 255) + (0, 0, 0) * 254)
@@ -32,12 +36,27 @@ def showRadioStationWorker(stationName):
   inky_display.set_image(img)
   inky_display.show()
 
+  isUpdating = False
+
+  global nextUpateThread
+  if nextUpateThread:
+    nextUpateThread.start()
+    nextUpateThread = None
+
 def showRadioStation(stationName):
   # Async display update
   thread = Thread(target=showRadioStationWorker, args=(stationName,))
-  thread.start()
+
+  if isUpdating:
+    global nextUpateThread
+    nextUpateThread = thread
+  else:
+    thread.start()
 
 def showBluetoothWorker():
+  global isUpdating
+  isUpdating = True
+
   img = Image.open(os.path.join(PATH, "assets/display-bluetooth.png"))
 
   pal_img = Image.new("P", (1, 1))
@@ -48,7 +67,19 @@ def showBluetoothWorker():
   inky_display.set_image(img)
   inky_display.show()
 
+  isUpdating = False
+
+  global nextUpateThread
+  if nextUpateThread:
+    nextUpateThread.start()
+    nextUpateThread = None
+
 def showBluetooth():
   # Async display update
   thread = Thread(target=showBluetoothWorker, args=())
-  thread.start()
+
+  if isUpdating:
+    global nextUpateThread
+    nextUpateThread = thread
+  else:
+    thread.start()
