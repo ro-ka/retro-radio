@@ -6,6 +6,8 @@ A internet radio based on a Raspberry Pi 3A+, using a Speaker Bonnet, an EInk di
 
 Setting the EInk display takes some time. Especially the shutdown isn’t the fastest as I used a display with color and that takes some extra time, but it doesn’t hurt while turning it off and walking away. It enabled me to have a nice off-message.
 
+See more on my website: https://robert.katzki.de/projects/retro-radio
+
 ## Speed up Raspbian boot
 
 ### Update, install vim and configure Pi
