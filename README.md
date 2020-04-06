@@ -1,6 +1,10 @@
 # Retro Radio
 
-Install Raspbian and setup wifi and so on.
+![](docs/radio.jpg)
+
+A internet radio based on a Raspberry Pi 3A+, using a Speaker Bonnet, an EInk display and the OnOff-Shim. I reused the old analogue volume control and on-off switch potentiometer. The sound comes from two different speakers to get the left and right channel and a wider sound frequence.
+
+Setting the EInk display takes some time. Especially the shutdown isn’t the fastest as I used a display with color and that takes some extra time, but it doesn’t hurt while turning it off and walking away. It enabled me to have a nice off-message.
 
 ## Speed up Raspbian boot
 
